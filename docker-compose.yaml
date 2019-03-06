@@ -1,0 +1,28 @@
+version: '2'
+services:
+  rabbitmq-1-server:
+    image: rabbitmq:3.6.15-management
+    container_name: rabbitmq-1-server
+    hostname: rabbitmq-1-server
+    ports:
+      - 15672:15672
+
+  heat-engine:
+    build: build/.
+    image: ttsubo/dummy_heat:juno
+    command: /bin/sh -c "sleep 15; python heat_engine.py > /log/heat-engine.log 2>& 1"
+    volumes:
+    - ./log:/log
+    container_name: heat-engine
+    hostname: heat-engine
+
+  heat-api:
+    build: build/.
+    image: ttsubo/dummy_heat:juno
+    command: /bin/sh -c "sleep 30; python heat_api.py > /log/heat-api.log 2>& 1"
+    volumes:
+    - ./log:/log
+    container_name: heat-api
+    hostname: heat-api
+    ports:
+      - 8080:8080
